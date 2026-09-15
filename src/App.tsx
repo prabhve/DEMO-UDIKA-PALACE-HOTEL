@@ -93,6 +93,7 @@ export default function App() {
           setBookingPrefillRoomId(undefined);
           setIsBookingModalOpen(true);
         }}
+        onOpenAdmin={() => setIsAdminOpen(true)}
       />
 
       {/* Main Content Sections */}

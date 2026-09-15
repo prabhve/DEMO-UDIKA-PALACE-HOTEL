@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Calendar, BedDouble, UtensilsCrossed, Award, 
   Image, MapPin, Mail, Tag, Settings, LogOut, Search, Check, 
   X, MessageSquare, Phone, RefreshCw, Plus, Trash2, Edit3, Eye, ShieldCheck,
-  Globe, ExternalLink
+  Globe, ExternalLink, Menu
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -52,6 +52,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [activeTab, setActiveTab] = useState<
     'DASHBOARD' | 'BOOKINGS' | 'ROOMS' | 'RESTAURANT' | 'BANQUETS' | 'GALLERY' | 'PLACES' | 'MESSAGES' | 'SETTINGS'
   >('DASHBOARD');
+
+  // Mobile navigation drawer toggle
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Booking search & filters
   const [bookingFilterStatus, setBookingFilterStatus] = useState<string>('ALL');
@@ -113,10 +116,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex bg-[#1c1917]/90 backdrop-blur-md overflow-hidden text-[#1c1917]">
+    <div className="fixed inset-0 z-50 flex bg-[#1c1917]/90 backdrop-blur-md overflow-y-auto text-[#1c1917] p-4 sm:p-6">
       {/* Login Screen if not authenticated */}
       {!isAuthenticated ? (
-        <div className="m-auto w-full max-w-md bg-[#faf8f5] rounded-2xl p-8 shadow-2xl border border-[#e7e5e4]">
+        <div className="m-auto w-full max-w-md bg-[#faf8f5] rounded-2xl p-6 sm:p-8 shadow-2xl border border-[#e7e5e4] my-auto">
           <div className="text-center mb-6">
             <div className="w-12 h-12 rounded-full border border-[#d4af37] bg-[#1c1917] text-[#d4af37] font-serif font-bold text-xl flex items-center justify-center mx-auto mb-3">
               U
@@ -151,7 +154,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="w-full py-2 text-xs text-[#78716c] hover:text-[#1c1917] uppercase tracking-wider"
+              className="w-full py-2 text-xs text-[#78716c] hover:text-[#1c1917] uppercase tracking-wider text-center"
             >
               Back to Public Website
             </button>
@@ -160,24 +163,45 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       ) : (
         /* Authenticated Admin Portal */
         <div className="flex w-full h-full bg-[#f5f0eb]">
-          {/* Admin Sidebar */}
-          <aside className="w-64 bg-[#1c1917] text-[#e7e5e4] flex flex-col justify-between shrink-0 border-r border-[#292524] hidden md:flex">
+          {/* Admin Sidebar (Desktop persistent, Mobile off-canvas drawer) */}
+          {mobileNavOpen && (
+            <div 
+              className="fixed inset-0 bg-black/60 z-30 md:hidden backdrop-blur-sm"
+              onClick={() => setMobileNavOpen(false)}
+            />
+          )}
+
+          <aside className={`fixed md:static inset-y-0 left-0 z-40 w-64 bg-[#1c1917] text-[#e7e5e4] flex flex-col justify-between shrink-0 border-r border-[#292524] transition-transform duration-200 ease-in-out ${
+            mobileNavOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          }`}>
             <div>
               {/* Brand Header */}
-              <div className="p-5 border-b border-[#292524] flex items-center space-x-3">
-                <div className="w-8 h-8 rounded-full border border-[#d4af37] bg-[#292524] text-[#d4af37] font-serif font-bold flex items-center justify-center">
-                  U
+              <div className="p-5 border-b border-[#292524] flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 rounded-full border border-[#d4af37] bg-[#292524] text-[#d4af37] font-serif font-bold flex items-center justify-center">
+                    U
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-serif font-bold text-white tracking-wide uppercase">Udika Palace</h4>
+                    <span className="text-[10px] text-[#d4af37] uppercase tracking-wider block">Admin Control Center</span>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-sm font-serif font-bold text-white tracking-wide uppercase">Udika Palace</h4>
-                  <span className="text-[10px] text-[#d4af37] uppercase tracking-wider block">Admin Control Center</span>
-                </div>
+
+                <button
+                  onClick={() => setMobileNavOpen(false)}
+                  className="p-1 rounded text-[#78716c] hover:text-white md:hidden"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
               {/* Navigation Items */}
               <nav className="p-3 space-y-1">
                 <button
-                  onClick={() => setActiveTab('DASHBOARD')}
+                  onClick={() => {
+                    setActiveTab('DASHBOARD');
+                    setMobileNavOpen(false);
+                  }}
                   className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-lg text-xs font-medium uppercase tracking-wider transition-colors ${
                     activeTab === 'DASHBOARD' ? 'bg-[#d4af37] text-[#1c1917] font-bold shadow-sm' : 'hover:bg-white/5 text-[#a8a29e] hover:text-white'
                   }`}
@@ -187,7 +211,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('BOOKINGS')}
+                  onClick={() => {
+                    setActiveTab('BOOKINGS');
+                    setMobileNavOpen(false);
+                  }}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-medium uppercase tracking-wider transition-colors ${
                     activeTab === 'BOOKINGS' ? 'bg-[#d4af37] text-[#1c1917] font-bold shadow-sm' : 'hover:bg-white/5 text-[#a8a29e] hover:text-white'
                   }`}
@@ -204,7 +231,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('ROOMS')}
+                  onClick={() => {
+                    setActiveTab('ROOMS');
+                    setMobileNavOpen(false);
+                  }}
                   className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-lg text-xs font-medium uppercase tracking-wider transition-colors ${
                     activeTab === 'ROOMS' ? 'bg-[#d4af37] text-[#1c1917] font-bold shadow-sm' : 'hover:bg-white/5 text-[#a8a29e] hover:text-white'
                   }`}
@@ -214,7 +244,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('RESTAURANT')}
+                  onClick={() => {
+                    setActiveTab('RESTAURANT');
+                    setMobileNavOpen(false);
+                  }}
                   className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-lg text-xs font-medium uppercase tracking-wider transition-colors ${
                     activeTab === 'RESTAURANT' ? 'bg-[#d4af37] text-[#1c1917] font-bold shadow-sm' : 'hover:bg-white/5 text-[#a8a29e] hover:text-white'
                   }`}
@@ -224,7 +257,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('BANQUETS')}
+                  onClick={() => {
+                    setActiveTab('BANQUETS');
+                    setMobileNavOpen(false);
+                  }}
                   className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-lg text-xs font-medium uppercase tracking-wider transition-colors ${
                     activeTab === 'BANQUETS' ? 'bg-[#d4af37] text-[#1c1917] font-bold shadow-sm' : 'hover:bg-white/5 text-[#a8a29e] hover:text-white'
                   }`}
@@ -234,7 +270,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('GALLERY')}
+                  onClick={() => {
+                    setActiveTab('GALLERY');
+                    setMobileNavOpen(false);
+                  }}
                   className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-lg text-xs font-medium uppercase tracking-wider transition-colors ${
                     activeTab === 'GALLERY' ? 'bg-[#d4af37] text-[#1c1917] font-bold shadow-sm' : 'hover:bg-white/5 text-[#a8a29e] hover:text-white'
                   }`}
@@ -244,7 +283,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('PLACES')}
+                  onClick={() => {
+                    setActiveTab('PLACES');
+                    setMobileNavOpen(false);
+                  }}
                   className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-lg text-xs font-medium uppercase tracking-wider transition-colors ${
                     activeTab === 'PLACES' ? 'bg-[#d4af37] text-[#1c1917] font-bold shadow-sm' : 'hover:bg-white/5 text-[#a8a29e] hover:text-white'
                   }`}
@@ -254,7 +296,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('MESSAGES')}
+                  onClick={() => {
+                    setActiveTab('MESSAGES');
+                    setMobileNavOpen(false);
+                  }}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-medium uppercase tracking-wider transition-colors ${
                     activeTab === 'MESSAGES' ? 'bg-[#d4af37] text-[#1c1917] font-bold shadow-sm' : 'hover:bg-white/5 text-[#a8a29e] hover:text-white'
                   }`}
@@ -271,7 +316,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('SETTINGS')}
+                  onClick={() => {
+                    setActiveTab('SETTINGS');
+                    setMobileNavOpen(false);
+                  }}
                   className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-lg text-xs font-medium uppercase tracking-wider transition-colors ${
                     activeTab === 'SETTINGS' ? 'bg-[#d4af37] text-[#1c1917] font-bold shadow-sm' : 'hover:bg-white/5 text-[#a8a29e] hover:text-white'
                   }`}
@@ -305,39 +353,75 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             {/* Top Bar */}
-            <header className="h-16 bg-white border-b border-[#e7e5e4] px-6 flex items-center justify-between shrink-0">
-              <div className="flex items-center space-x-3">
-                <h2 className="text-lg font-serif font-bold text-[#1c1917]">
-                  {activeTab === 'DASHBOARD' && 'Hospitality Operations Overview'}
-                  {activeTab === 'BOOKINGS' && 'Reservation Requests & Bookings'}
-                  {activeTab === 'ROOMS' && 'Room Inventory & Pricing Configuration'}
+            <header className="h-16 bg-white border-b border-[#e7e5e4] px-4 sm:px-6 flex items-center justify-between shrink-0">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                {/* Mobile Menu Toggle Button */}
+                <button
+                  onClick={() => setMobileNavOpen(!mobileNavOpen)}
+                  className="p-1.5 rounded-lg border border-[#d6d3d1] text-[#1c1917] hover:bg-[#faf8f5] md:hidden"
+                  aria-label="Toggle admin navigation"
+                >
+                  <Menu className="w-5 h-5" />
+                </button>
+
+                <h2 className="text-sm sm:text-lg font-serif font-bold text-[#1c1917] line-clamp-1">
+                  {activeTab === 'DASHBOARD' && 'Operations Overview'}
+                  {activeTab === 'BOOKINGS' && 'Reservation Requests'}
+                  {activeTab === 'ROOMS' && 'Room Inventory & Pricing'}
                   {activeTab === 'RESTAURANT' && 'Restaurant & Menu CMS'}
                   {activeTab === 'BANQUETS' && 'Banquets & Event Enquiries'}
                   {activeTab === 'GALLERY' && 'Visual Media & Gallery CMS'}
-                  {activeTab === 'PLACES' && 'Nearby Heritage & Attractions CMS'}
-                  {activeTab === 'MESSAGES' && 'Guest Messages & Contact Inquiries'}
-                  {activeTab === 'SETTINGS' && 'Master Property & Contact CMS'}
+                  {activeTab === 'PLACES' && 'Nearby Heritage & Attractions'}
+                  {activeTab === 'MESSAGES' && 'Guest Messages'}
+                  {activeTab === 'SETTINGS' && 'Hotel CMS Settings'}
                 </h2>
                 {hotelData.isSyncing && (
-                  <span className="text-[11px] text-[#c49b29] flex items-center space-x-1">
+                  <span className="text-[10px] sm:text-[11px] text-[#c49b29] flex items-center space-x-1 shrink-0">
                     <RefreshCw className="w-3 h-3 animate-spin" />
-                    <span>Syncing Cloud...</span>
+                    <span className="hidden sm:inline">Syncing...</span>
                   </span>
                 )}
               </div>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 sm:space-x-3">
                 <button
                   onClick={onClose}
-                  className="px-3 py-1.5 border border-[#d6d3d1] hover:bg-[#faf8f5] rounded-lg text-xs font-semibold uppercase tracking-wider text-[#1c1917]"
+                  className="px-2.5 sm:px-3 py-1.5 border border-[#d6d3d1] hover:bg-[#faf8f5] rounded-lg text-xs font-semibold uppercase tracking-wider text-[#1c1917]"
                 >
-                  Exit to Website
+                  Exit
                 </button>
               </div>
             </header>
 
+            {/* Mobile Tab Navigation Bar (Horizontally scrollable for fast mobile access) */}
+            <div className="flex md:hidden bg-[#1c1917] text-[#faf8f5] px-3 py-2 overflow-x-auto space-x-1 border-b border-[#292524] shrink-0 no-scrollbar">
+              {[
+                { id: 'DASHBOARD', label: 'Dashboard' },
+                { id: 'BOOKINGS', label: `Bookings ${pendingBookings > 0 ? `(${pendingBookings})` : ''}` },
+                { id: 'ROOMS', label: 'Rooms' },
+                { id: 'RESTAURANT', label: 'Menu' },
+                { id: 'BANQUETS', label: 'Banquets' },
+                { id: 'GALLERY', label: 'Gallery' },
+                { id: 'PLACES', label: 'Places' },
+                { id: 'MESSAGES', label: `Inquiries ${unreadMessages > 0 ? `(${unreadMessages})` : ''}` },
+                { id: 'SETTINGS', label: 'Settings' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`px-3 py-1 rounded text-xs font-medium whitespace-nowrap transition-colors ${
+                    activeTab === tab.id
+                      ? 'bg-[#d4af37] text-[#1c1917] font-bold'
+                      : 'text-[#a8a29e] hover:text-white'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
             {/* Viewport Content */}
-            <main className="flex-1 p-6 overflow-y-auto">
+            <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
               {/* TAB 1: DASHBOARD */}
               {activeTab === 'DASHBOARD' && (
                 <div className="space-y-6">

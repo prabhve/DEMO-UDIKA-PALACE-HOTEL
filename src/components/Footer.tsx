@@ -22,7 +22,7 @@ export const Footer: React.FC<FooterProps> = ({
   };
 
   return (
-    <footer className="bg-[#1c1917] text-[#e7e5e4] pt-16 pb-12 border-t border-[#44403c]">
+    <footer className="bg-[#1c1917] text-[#e7e5e4] pt-16 pb-24 lg:pb-12 border-t border-[#44403c]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#292524]">
           {/* Column 1: Brand / Hotel */}
@@ -158,11 +158,13 @@ export const Footer: React.FC<FooterProps> = ({
         </div>
 
         {/* Bottom Bar with subtle, discreet Admin Login link as requested */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#78716c] gap-4">
-          <p>© {currentYear} {settings.name}, Waidhan, Singrauli. All rights reserved.</p>
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between text-[11px] text-[#78716c] gap-4 text-center md:text-left">
+          <p className="order-1 md:order-1">
+            © {currentYear} {settings.name}, Waidhan, Singrauli. All rights reserved.
+          </p>
 
           {/* Attribution: Designed with love by VYUVIK LABS */}
-          <div className="flex items-center space-x-1.5 text-xs text-[#a8a29e]">
+          <div className="order-2 md:order-2 flex items-center justify-center space-x-1.5 text-xs text-[#a8a29e] py-1">
             <span>Designed with</span>
             <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline-block animate-pulse" />
             <span>by</span>
@@ -171,12 +173,12 @@ export const Footer: React.FC<FooterProps> = ({
             </span>
           </div>
           
-          <div className="flex items-center space-x-5">
+          <div className="order-3 md:order-3 flex items-center justify-center space-x-5">
             <a
               href="/sitemap.xml"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#78716c] hover:text-[#d4af37] transition-colors"
+              className="text-[#78716c] hover:text-[#d4af37] transition-colors py-1"
             >
               XML Sitemap
             </a>
@@ -185,10 +187,10 @@ export const Footer: React.FC<FooterProps> = ({
             <button
               id="footer-admin-login-link"
               onClick={onOpenAdmin}
-              className="text-[#57534e] hover:text-[#a8a29e] transition-colors flex items-center space-x-1"
+              className="text-[#78716c] hover:text-[#faf8f5] bg-[#292524] md:bg-transparent px-3 py-1.5 md:p-0 rounded-md border border-[#44403c] md:border-0 transition-colors flex items-center space-x-1.5 text-xs md:text-[11px] font-medium"
               title="Hotel Management Portal"
             >
-              <Lock className="w-3 h-3" />
+              <Lock className="w-3.5 h-3.5 text-[#d4af37]" />
               <span>Admin Login</span>
             </button>
           </div>

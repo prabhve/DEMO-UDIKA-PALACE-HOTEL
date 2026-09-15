@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, MessageSquare, Menu, X, Calendar } from 'lucide-react';
+import { Phone, MessageSquare, Menu, X, Calendar, Lock } from 'lucide-react';
 import { HotelSettings } from '../types';
 
 interface NavbarProps {
@@ -7,6 +7,7 @@ interface NavbarProps {
   activeSection: string;
   onNavigate: (sectionId: string) => void;
   onOpenBooking: () => void;
+  onOpenAdmin?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -14,6 +15,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeSection,
   onNavigate,
   onOpenBooking,
+  onOpenAdmin,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -187,6 +189,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>WhatsApp</span>
               </button>
             </div>
+
+            {onOpenAdmin && (
+              <div className="mt-3 pt-3 border-t border-[#292524]/60 flex items-center justify-between px-1">
+                <span className="text-[11px] text-[#78716c]">Hotel Management Portal</span>
+                <button
+                  id="mobile-menu-admin-login-btn"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenAdmin();
+                  }}
+                  className="flex items-center space-x-1.5 px-2.5 py-1 text-xs text-[#d4af37] hover:text-[#faf8f5] bg-[#292524] rounded border border-[#44403c] transition-colors"
+                >
+                  <Lock className="w-3 h-3" />
+                  <span>Admin Login</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
       </header>
