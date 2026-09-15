@@ -165,10 +165,10 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Attribution: Designed with love by VYUVIK LABS */}
           <div className="order-2 md:order-2 flex items-center justify-center space-x-1.5 text-xs text-[#a8a29e] py-1">
-            <span>Designed with</span>
+            <span>Designed with love</span>
             <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline-block animate-pulse" />
             <span>by</span>
-            <span className="font-semibold tracking-wider text-[#faf8f5] hover:text-[#d4af37] transition-colors">
+            <span className="font-bold tracking-wider text-[#faf8f5] hover:text-[#d4af37] transition-colors">
               VYUVIK LABS
             </span>
           </div>

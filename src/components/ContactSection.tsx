@@ -57,13 +57,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           <div className="lg:col-span-5 space-y-8">
             <div>
               <span className="text-xs font-semibold tracking-widest text-[#c49b29] uppercase">
-                Find Us & Connect
+                {settings.contactEyebrow || 'Find Us & Connect'}
               </span>
               <h2 className="text-3xl sm:text-4xl font-serif text-[#1c1917] tracking-tight mt-1 mb-4">
-                Hospitality Concierge Desk
+                {settings.contactHeading || 'Hospitality Concierge Desk'}
               </h2>
               <p className="text-sm text-[#78716c] font-light leading-relaxed">
-                Whether you require custom corporate billing, banquet walkthroughs, or immediate room assistance, our reception desk in Waidhan is at your service 24 hours a day.
+                {settings.contactDescription || 'Whether you require custom corporate billing, banquet walkthroughs, or immediate room assistance, our reception desk in Waidhan is at your service 24 hours a day.'}
               </p>
             </div>
 

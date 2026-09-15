@@ -297,15 +297,15 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({ settings, places }) => {
           <div className="max-w-2xl">
             <div className="inline-flex items-center space-x-2 text-xs font-semibold tracking-widest uppercase text-[#c49b29] mb-2">
               <Compass className="w-3.5 h-3.5" />
-              <span>Singrauli & Waidhan Heritage Guide</span>
+              <span>{settings.placesEyebrow || 'Singrauli & Waidhan Heritage Guide'}</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-[#1c1917] tracking-tight">
-              Explore Around Udika Palace
+              {settings.placesHeading || `Explore Around ${settings.name}`}
             </h2>
 
             <p className="text-sm sm:text-base text-[#78716c] font-light mt-3 leading-relaxed">
-              Discover famous tourist attractions, tranquil parks, dams, and temples in Waidhan & Singrauli with real-time live map views and seamless navigation directions directly from Hotel Udika Palace.
+              {settings.placesDescription || 'Discover famous tourist attractions, tranquil parks, dams, and temples in Waidhan & Singrauli with real-time live map views and seamless navigation directions directly from Hotel Udika Palace.'}
             </p>
           </div>
 

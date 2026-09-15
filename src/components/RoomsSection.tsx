@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Room } from '../types';
+import { Room, HotelSettings } from '../types';
 import { Check, Users, Bed, Eye, Calendar, Sparkles, Wind, Maximize2 } from 'lucide-react';
 
 interface RoomsSectionProps {
   rooms: Room[];
+  settings?: HotelSettings;
   phone?: string;
   onSelectRoomDetails?: (room: Room) => void;
   onSelectRoom?: (room: Room) => void;
@@ -12,6 +13,8 @@ interface RoomsSectionProps {
 
 export const RoomsSection: React.FC<RoomsSectionProps> = ({
   rooms,
+  settings,
+  phone,
   onSelectRoomDetails,
   onSelectRoom,
   onBookRoom,
@@ -36,15 +39,15 @@ export const RoomsSection: React.FC<RoomsSectionProps> = ({
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center space-x-2 text-xs font-semibold tracking-widest uppercase text-[#c49b29] mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Accommodation & Stays</span>
+            <span>{settings?.roomsEyebrow || 'Accommodation & Stays'}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-[#1c1917] tracking-tight mb-4">
-            Curated Rooms & Suites
+            {settings?.roomsHeading || 'Curated Rooms & Suites'}
           </h2>
 
           <p className="text-sm sm:text-base text-[#78716c] font-light leading-relaxed">
-            Every room at Hotel Udika Palace is tailored to offer tranquility, ergonomic comfort, and genuine warmth after a full day in Singrauli.
+            {settings?.roomsDescription || 'Every room at Hotel Udika Palace is tailored to offer tranquility, ergonomic comfort, and genuine warmth after a full day in Singrauli.'}
           </p>
 
           {/* AC / Non-AC Filters */}

@@ -138,11 +138,29 @@ export function useHotelData() {
           await setDoc(placesRef, { items: initialNearbyPlaces });
         }
 
+        // Load Gallery
+        const galleryRef = doc(db, 'cms', GALLERY_DOC);
+        const gallerySnap = await getDoc(galleryRef);
+        if (gallerySnap.exists() && gallerySnap.data().items) {
+          setGallery(gallerySnap.data().items as GalleryItem[]);
+        } else {
+          await setDoc(galleryRef, { items: initialGallery });
+        }
+
         // Load Messages
         const msgRef = doc(db, 'cms', MESSAGES_DOC);
         const msgSnap = await getDoc(msgRef);
         if (msgSnap.exists() && msgSnap.data().items) {
           setMessages(msgSnap.data().items as ContactMessage[]);
+        }
+
+        // Load Offers
+        const offersRef = doc(db, 'cms', OFFERS_DOC);
+        const offersSnap = await getDoc(offersRef);
+        if (offersSnap.exists() && offersSnap.data().items) {
+          setOffers(offersSnap.data().items as SpecialOffer[]);
+        } else {
+          await setDoc(offersRef, { items: initialOffers });
         }
       } catch (err) {
         console.warn('Firestore sync note: using cached local storage while cloud establishes', err);
@@ -262,6 +280,16 @@ export function useHotelData() {
     return newEnquiry;
   };
 
+  const updateEnquiryStatus = async (id: string, status: EventEnquiry['status']) => {
+    const updated = eventEnquiries.map(e => e.id === id ? { ...e, status } : e);
+    setEventEnquiries(updated);
+    try {
+      await setDoc(doc(db, 'cms', EVENTS_DOC), { items: updated });
+    } catch (e) {
+      console.error('Failed to sync event enquiry status to Firestore:', e);
+    }
+  };
+
   const updateMenu = async (newItems: MenuItem[]) => {
     setMenuItems(newItems);
     try {
@@ -338,6 +366,7 @@ export function useHotelData() {
     updateBanquets,
     eventEnquiries,
     addEventEnquiry,
+    updateEnquiryStatus,
     gallery,
     updateGallery,
     nearbyPlaces,

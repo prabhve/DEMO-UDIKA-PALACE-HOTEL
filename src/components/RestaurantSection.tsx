@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { MenuItem } from '../types';
+import { MenuItem, HotelSettings } from '../types';
 import { Utensils, Sparkles, Flame, Clock, Coffee, ShieldCheck } from 'lucide-react';
 
 interface RestaurantSectionProps {
   restaurantName: string;
   menuItems: MenuItem[];
+  settings?: HotelSettings;
   onBookDiningTable?: () => void;
 }
 
 export const RestaurantSection: React.FC<RestaurantSectionProps> = ({
   restaurantName,
   menuItems,
+  settings,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [vegOnly, setVegOnly] = useState<boolean>(false);
@@ -34,6 +36,12 @@ export const RestaurantSection: React.FC<RestaurantSectionProps> = ({
 
   const chefSpecials = menuItems.filter((item) => item.isChefSpecial && item.isAvailable);
 
+  const breakfastTime = settings?.restaurantTimings?.breakfast || '07:30 - 10:30 AM';
+  const lunchTime = settings?.restaurantTimings?.lunch || '12:30 - 03:30 PM';
+  const dinnerTime = settings?.restaurantTimings?.dinner || '07:30 - 11:00 PM';
+  const img1 = settings?.restaurantImage1Url || 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80';
+  const img2 = settings?.restaurantImage2Url || 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=800&q=80';
+
   return (
     <section id="restaurant" className="py-20 lg:py-28 bg-[#1c1917] text-[#faf8f5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,38 +50,40 @@ export const RestaurantSection: React.FC<RestaurantSectionProps> = ({
           <div className="lg:col-span-6 space-y-6">
             <div className="inline-flex items-center space-x-2 text-xs font-semibold tracking-widest uppercase text-[#d4af37]">
               <Utensils className="w-3.5 h-3.5" />
-              <span>Culinary Excellence</span>
+              <span>{settings?.restaurantEyebrow || 'Culinary Excellence'}</span>
             </div>
 
             <h2 className="text-3xl sm:text-5xl font-serif tracking-tight leading-tight">
-              Dine at <span className="text-[#d4af37] italic">{restaurantName}</span>
+              {settings?.restaurantHeading || (
+                <>Dine at <span className="text-[#d4af37] italic">{restaurantName}</span></>
+              )}
             </h2>
 
             <p className="text-sm sm:text-base text-[#d6d3d1] font-light leading-relaxed">
-              Serving a rich repertoire of aromatic North Indian gravies, slow-cooked clay oven tandoor delicacies, and crisp wok-tossed Indo-Chinese dishes. We take pride in freshly ground spices, pure clarified butter (desi ghee), and uncompromised culinary hygiene.
+              {settings?.restaurantDescription || 'Serving a rich repertoire of aromatic North Indian gravies, slow-cooked clay oven tandoor delicacies, and crisp wok-tossed Indo-Chinese dishes. We take pride in freshly ground spices, pure clarified butter (desi ghee), and uncompromised culinary hygiene.'}
             </p>
 
             <div className="grid grid-cols-3 gap-4 pt-4 border-t border-[#44403c] text-center">
               <div className="p-3 bg-[#292524] rounded-lg border border-[#44403c]">
                 <Coffee className="w-4 h-4 text-[#d4af37] mx-auto mb-1" />
                 <span className="text-[10px] uppercase text-[#a8a29e] block">Breakfast</span>
-                <span className="text-xs font-semibold">07:30 - 10:30 AM</span>
+                <span className="text-xs font-semibold">{breakfastTime}</span>
               </div>
               <div className="p-3 bg-[#292524] rounded-lg border border-[#44403c]">
                 <Clock className="w-4 h-4 text-[#d4af37] mx-auto mb-1" />
                 <span className="text-[10px] uppercase text-[#a8a29e] block">Lunch</span>
-                <span className="text-xs font-semibold">12:30 - 03:30 PM</span>
+                <span className="text-xs font-semibold">{lunchTime}</span>
               </div>
               <div className="p-3 bg-[#292524] rounded-lg border border-[#44403c]">
                 <Sparkles className="w-4 h-4 text-[#d4af37] mx-auto mb-1" />
                 <span className="text-[10px] uppercase text-[#a8a29e] block">Dinner</span>
-                <span className="text-xs font-semibold">07:30 - 11:00 PM</span>
+                <span className="text-xs font-semibold">{dinnerTime}</span>
               </div>
             </div>
 
             <div className="flex items-center space-x-2 text-xs text-[#a8a29e]">
               <ShieldCheck className="w-4 h-4 text-[#d4af37]" />
-              <span>In-room dining service available 24/7 for resident hotel guests.</span>
+              <span>{settings?.restaurantRoomServiceNotice || 'In-room dining service available 24/7 for resident hotel guests.'}</span>
             </div>
           </div>
 
@@ -81,15 +91,15 @@ export const RestaurantSection: React.FC<RestaurantSectionProps> = ({
           <div className="lg:col-span-6 grid grid-cols-2 gap-4">
             <div className="rounded-xl overflow-hidden shadow-xl h-64 sm:h-80 border border-white/10">
               <img
-                src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80"
-                alt="Dal Makhani and Indian Breads"
+                src={img1}
+                alt={`${restaurantName} Dish`}
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
             <div className="rounded-xl overflow-hidden shadow-xl h-64 sm:h-80 mt-8 border border-white/10">
               <img
-                src="https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=800&q=80"
-                alt="Clay Oven Paneer Tikka"
+                src={img2}
+                alt={`${restaurantName} Specialty`}
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>

@@ -133,6 +133,7 @@ export default function App() {
         {/* 4. Rooms & Suites Grid */}
         <RoomsSection
           rooms={rooms}
+          settings={settings}
           phone={settings.phone}
           onSelectRoom={(room) => setSelectedRoomForDetail(room)}
           onBookRoom={handleOpenBookingForRoom}
@@ -141,18 +142,20 @@ export default function App() {
         {/* 5. Restaurant Section */}
         <RestaurantSection
           restaurantName={settings.restaurantName}
+          settings={settings}
           menuItems={menuItems}
         />
 
         {/* 6. Banquets & Celebrations */}
         <BanquetsSection
           banquets={banquets}
+          settings={settings}
           whatsappNumber={settings.whatsappNumber}
           onSubmitEnquiry={addEventEnquiry}
         />
 
         {/* 7. Visual Gallery */}
-        <GallerySection gallery={gallery} />
+        <GallerySection gallery={gallery} settings={settings} />
 
         {/* 8. 3D Heritage Map & Nearby Explorer */}
         <ExploreMap

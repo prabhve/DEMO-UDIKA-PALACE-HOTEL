@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { BanquetHall, EventEnquiry } from '../types';
+import { BanquetHall, EventEnquiry, HotelSettings } from '../types';
 import { Users, Car, Sparkles, Check, Calendar, MessageSquare, Send, Award } from 'lucide-react';
 
 interface BanquetsSectionProps {
   banquets: BanquetHall[];
+  settings?: HotelSettings;
   whatsappNumber: string;
   onSubmitEnquiry: (enquiry: Omit<EventEnquiry, 'id' | 'referenceId' | 'createdAt' | 'status'>) => Promise<EventEnquiry>;
 }
 
 export const BanquetsSection: React.FC<BanquetsSectionProps> = ({
   banquets,
+  settings,
   whatsappNumber,
   onSubmitEnquiry,
 }) => {
@@ -68,15 +70,15 @@ export const BanquetsSection: React.FC<BanquetsSectionProps> = ({
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center space-x-2 text-xs font-semibold tracking-widest uppercase text-[#c49b29] mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Celebrations & Banqueting</span>
+            <span>{settings?.banquetsEyebrow || 'Celebrations & Banqueting'}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-[#1c1917] tracking-tight mb-4">
-            Celebrate at Udika Palace
+            {settings?.banquetsHeading || 'Celebrate at Udika Palace'}
           </h2>
 
           <p className="text-sm sm:text-base text-[#78716c] font-light leading-relaxed">
-            From regal wedding receptions and sangeet celebrations to high-profile corporate mining seminars, our customizable venues transform gatherings into indelible milestones.
+            {settings?.banquetsDescription || 'From regal wedding receptions and sangeet celebrations to high-profile corporate mining seminars, our customizable venues transform gatherings into indelible milestones.'}
           </p>
         </div>
 

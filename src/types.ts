@@ -28,6 +28,63 @@ export interface HotelSettings {
     facebook?: string;
     googleBusiness?: string;
   };
+
+  // Hero Section Customization
+  heroLocationTag?: string;
+  heroCtaBookText?: string;
+  heroCtaExploreText?: string;
+  heroBadges?: string[];
+
+  // Introduction / About Section Customization
+  introEyebrow?: string;
+  introHeading?: string;
+  introParagraph1?: string;
+  introParagraph2?: string;
+  introImageUrl?: string;
+  introBadgeTitle?: string;
+  introBadgeSubtitle?: string;
+  introPillars?: {
+    title: string;
+    description: string;
+  }[];
+
+  // Accommodation / Rooms Section Customization
+  roomsEyebrow?: string;
+  roomsHeading?: string;
+  roomsDescription?: string;
+
+  // Restaurant Section Customization
+  restaurantEyebrow?: string;
+  restaurantHeading?: string;
+  restaurantDescription?: string;
+  restaurantImage1Url?: string;
+  restaurantImage2Url?: string;
+  restaurantTimings?: {
+    breakfast: string;
+    lunch: string;
+    dinner: string;
+  };
+  restaurantRoomServiceNotice?: string;
+
+  // Banquets Section Customization
+  banquetsEyebrow?: string;
+  banquetsHeading?: string;
+  banquetsDescription?: string;
+
+  // Gallery Section Customization
+  galleryEyebrow?: string;
+  galleryHeading?: string;
+  galleryDescription?: string;
+
+  // Nearby Attractions Section Customization
+  placesEyebrow?: string;
+  placesHeading?: string;
+  placesDescription?: string;
+
+  // Contact Section Customization
+  contactEyebrow?: string;
+  contactHeading?: string;
+  contactDescription?: string;
 }
 
 export interface Room {

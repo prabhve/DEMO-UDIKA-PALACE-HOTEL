@@ -9,6 +9,12 @@ import {
   X, MessageSquare, Phone, RefreshCw, Plus, Trash2, Edit3, Eye, ShieldCheck,
   Globe, ExternalLink, Menu
 } from 'lucide-react';
+import { AdminSettingsCMS } from './admin/AdminSettingsCMS';
+import { AdminRoomsCMS } from './admin/AdminRoomsCMS';
+import { AdminRestaurantCMS } from './admin/AdminRestaurantCMS';
+import { AdminBanquetsCMS } from './admin/AdminBanquetsCMS';
+import { AdminGalleryCMS } from './admin/AdminGalleryCMS';
+import { AdminPlacesCMS } from './admin/AdminPlacesCMS';
 
 interface AdminDashboardProps {
   isOpen: boolean;
@@ -25,6 +31,7 @@ interface AdminDashboardProps {
     banquets: BanquetHall[];
     updateBanquets: (b: BanquetHall[]) => Promise<void>;
     eventEnquiries: EventEnquiry[];
+    updateEnquiryStatus?: (id: string, status: EventEnquiry['status']) => Promise<void>;
     gallery: GalleryItem[];
     updateGallery: (g: GalleryItem[]) => Promise<void>;
     nearbyPlaces: NearbyPlace[];
@@ -100,11 +107,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     return matchesStatus && matchesSearch;
   });
 
-  const handleSaveSettings = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveSettings = async (newSettings: HotelSettings) => {
     setIsSavingSettings(true);
     try {
-      await hotelData.updateSettings(editingSettings);
+      await hotelData.updateSettings(newSettings);
+      setEditingSettings(newSettings);
       setSaveSuccessMsg('Property Settings successfully updated and synchronized to live website!');
       setTimeout(() => setSaveSuccessMsg(''), 4000);
     } catch (err) {
@@ -116,10 +123,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex bg-[#1c1917]/90 backdrop-blur-md overflow-y-auto text-[#1c1917] p-4 sm:p-6">
+    <div className="fixed inset-0 z-50 flex bg-[#1c1917]/95 backdrop-blur-md overflow-hidden text-[#1c1917]">
       {/* Login Screen if not authenticated */}
       {!isAuthenticated ? (
-        <div className="m-auto w-full max-w-md bg-[#faf8f5] rounded-2xl p-6 sm:p-8 shadow-2xl border border-[#e7e5e4] my-auto">
+        <div className="m-auto w-full max-w-md bg-[#faf8f5] rounded-2xl p-6 sm:p-8 shadow-2xl border border-[#e7e5e4] my-auto mx-4 max-h-[90vh] overflow-y-auto">
           <div className="text-center mb-6">
             <div className="w-12 h-12 rounded-full border border-[#d4af37] bg-[#1c1917] text-[#d4af37] font-serif font-bold text-xl flex items-center justify-center mx-auto mb-3">
               U
@@ -162,16 +169,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       ) : (
         /* Authenticated Admin Portal */
-        <div className="flex w-full h-full bg-[#f5f0eb]">
+        <div className="flex flex-col md:flex-row w-full h-full bg-[#f5f0eb] overflow-hidden">
           {/* Admin Sidebar (Desktop persistent, Mobile off-canvas drawer) */}
           {mobileNavOpen && (
             <div 
-              className="fixed inset-0 bg-black/60 z-30 md:hidden backdrop-blur-sm"
+              className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
               onClick={() => setMobileNavOpen(false)}
             />
           )}
 
-          <aside className={`fixed md:static inset-y-0 left-0 z-40 w-64 bg-[#1c1917] text-[#e7e5e4] flex flex-col justify-between shrink-0 border-r border-[#292524] transition-transform duration-200 ease-in-out ${
+          <aside className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-[#1c1917] text-[#e7e5e4] flex flex-col justify-between shrink-0 border-r border-[#292524] transition-transform duration-200 ease-in-out h-full ${
             mobileNavOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
           }`}>
             <div>
@@ -421,7 +428,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
 
             {/* Viewport Content */}
-            <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
+            <main className="flex-1 p-3 sm:p-6 overflow-y-auto pb-28 md:pb-8">
               {/* TAB 1: DASHBOARD */}
               {activeTab === 'DASHBOARD' && (
                 <div className="space-y-6">
@@ -661,417 +668,127 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
               {/* TAB 3: ROOMS CMS */}
               {activeTab === 'ROOMS' && (
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs text-[#78716c]">
-                      Configure room pricing, dimensions, and descriptions. Changes reflect immediately on public site.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {hotelData.rooms.map((room) => (
-                      <div key={room.id} className="bg-white rounded-xl border border-[#e7e5e4] p-5 shadow-sm space-y-4">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#c49b29]">{room.category}</span>
-                            <h4 className="text-lg font-serif font-bold text-[#1c1917]">{room.name}</h4>
-                          </div>
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${room.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-200 text-gray-700'}`}>
-                            {room.isActive ? 'Active' : 'Disabled'}
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3 text-xs">
-                          <div>
-                            <label className="block text-[#78716c] text-[10px] uppercase">Base Rate (₹ / night)</label>
-                            <input
-                              type="number"
-                              value={room.baseRatePerNight || 0}
-                              onChange={(e) => {
-                                const val = Number(e.target.value);
-                                const updated = hotelData.rooms.map(r => r.id === room.id ? { ...r, baseRatePerNight: val } : r);
-                                hotelData.updateRooms(updated);
-                              }}
-                              className="w-full border border-[#d6d3d1] rounded px-2.5 py-1.5 font-bold text-[#1c1917]"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-[#78716c] text-[10px] uppercase">Approx Size (sq.ft)</label>
-                            <input
-                              type="number"
-                              value={room.roomSizeSqFt || 0}
-                              onChange={(e) => {
-                                const val = Number(e.target.value);
-                                const updated = hotelData.rooms.map(r => r.id === room.id ? { ...r, roomSizeSqFt: val } : r);
-                                hotelData.updateRooms(updated);
-                              }}
-                              className="w-full border border-[#d6d3d1] rounded px-2.5 py-1.5"
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-[#78716c] text-[10px] uppercase mb-1">Short Description</label>
-                          <textarea
-                            rows={2}
-                            value={room.shortDescription}
-                            onChange={(e) => {
-                              const updated = hotelData.rooms.map(r => r.id === room.id ? { ...r, shortDescription: e.target.value } : r);
-                              hotelData.updateRooms(updated);
-                            }}
-                            className="w-full border border-[#d6d3d1] rounded px-2.5 py-1.5 text-xs text-[#57534e]"
-                          />
-                        </div>
-
-                        <div className="flex items-center justify-between pt-2 border-t border-[#e7e5e4] text-xs">
-                          <label className="inline-flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              checked={room.showPrice}
-                              onChange={(e) => {
-                                const updated = hotelData.rooms.map(r => r.id === room.id ? { ...r, showPrice: e.target.checked } : r);
-                                hotelData.updateRooms(updated);
-                              }}
-                              className="rounded text-[#c49b29]"
-                            />
-                            <span>Display Price Publicly</span>
-                          </label>
-
-                          <label className="inline-flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              checked={room.isActive}
-                              onChange={(e) => {
-                                const updated = hotelData.rooms.map(r => r.id === room.id ? { ...r, isActive: e.target.checked } : r);
-                                hotelData.updateRooms(updated);
-                              }}
-                              className="rounded text-emerald-600"
-                            />
-                            <span>Active in Booking Engine</span>
-                          </label>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <AdminRoomsCMS
+                  rooms={hotelData.rooms}
+                  onUpdateRooms={hotelData.updateRooms}
+                />
               )}
 
               {/* TAB 4: RESTAURANT CMS */}
               {activeTab === 'RESTAURANT' && (
-                <div className="bg-white rounded-xl border border-[#e7e5e4] p-6 shadow-sm space-y-6">
-                  <div className="flex items-center justify-between pb-4 border-b border-[#e7e5e4]">
+                <AdminRestaurantCMS
+                  menuItems={hotelData.menuItems}
+                  onUpdateMenu={hotelData.updateMenu}
+                />
+              )}
+
+              {/* TAB 5: BANQUETS & EVENTS CMS */}
+              {activeTab === 'BANQUETS' && (
+                <AdminBanquetsCMS
+                  banquets={hotelData.banquets}
+                  enquiries={hotelData.eventEnquiries}
+                  onUpdateBanquets={hotelData.updateBanquets}
+                  onUpdateEnquiryStatus={hotelData.updateEnquiryStatus || (async () => {})}
+                  whatsappNumber={hotelData.settings.whatsappNumber}
+                />
+              )}
+
+              {/* TAB 6: MASTER SETTINGS & WEBSITE CMS */}
+              {activeTab === 'SETTINGS' && (
+                <AdminSettingsCMS
+                  settings={hotelData.settings}
+                  onSave={handleSaveSettings}
+                  isSaving={isSavingSettings}
+                  saveSuccessMsg={saveSuccessMsg || null}
+                />
+              )}
+
+              {/* TAB 7: VISUAL MEDIA & GALLERY CMS */}
+              {activeTab === 'GALLERY' && (
+                <AdminGalleryCMS
+                  gallery={hotelData.gallery}
+                  onUpdateGallery={hotelData.updateGallery}
+                />
+              )}
+
+              {/* TAB 8: NEARBY PLACES & ATTRACTIONS CMS */}
+              {activeTab === 'PLACES' && (
+                <AdminPlacesCMS
+                  places={hotelData.nearbyPlaces}
+                  onUpdatePlaces={hotelData.updateNearbyPlaces}
+                />
+              )}
+
+              {/* TAB 9: GUEST MESSAGES & INQUIRIES */}
+              {activeTab === 'MESSAGES' && (
+                <div className="bg-white rounded-xl border border-[#e7e5e4] p-4 sm:p-6 shadow-sm space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#e7e5e4] gap-2">
                     <div>
                       <h3 className="text-base font-serif font-bold text-[#1c1917]">
-                        Restaurant & Culinary Items
+                        Guest Inquiries & Direct Messages
                       </h3>
                       <p className="text-xs text-[#78716c]">
-                        Manage items, pricing, and chef recommendations for {hotelData.settings.restaurantName}.
+                        Messages submitted by guests from the public website contact section.
                       </p>
                     </div>
+                    <span className="text-xs font-semibold px-2.5 py-1 bg-amber-50 text-amber-800 rounded-full self-start sm:self-auto border border-amber-200">
+                      {hotelData.messages.length} Total Messages
+                    </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {hotelData.menuItems.map((item) => (
-                      <div key={item.id} className="p-4 rounded-xl border border-[#e7e5e4] bg-[#faf8f5] flex items-start justify-between space-x-3">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <span className={`w-2.5 h-2.5 rounded-full ${item.isVeg ? 'bg-emerald-600' : 'bg-rose-600'}`} />
-                            <h5 className="text-sm font-bold text-[#1c1917]">{item.name}</h5>
-                            {item.isChefSpecial && (
-                              <span className="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold">
-                                Chef Special
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-[#78716c] line-clamp-2">{item.description}</p>
-                          <span className="text-[10px] text-[#a8a29e] block mt-1">{item.category}</span>
-                        </div>
-
-                        <div className="text-right">
-                          <span className="font-bold text-[#1c1917] text-sm">₹{item.price}</span>
-                          <div className="mt-2">
-                            <button
-                              onClick={() => {
-                                const updated = hotelData.menuItems.map(m => m.id === item.id ? { ...m, isAvailable: !m.isAvailable } : m);
-                                hotelData.updateMenu(updated);
-                              }}
-                              className={`text-[10px] px-2 py-0.5 rounded font-semibold ${
-                                item.isAvailable ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'
-                              }`}
-                            >
-                              {item.isAvailable ? 'Available' : 'Sold Out'}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 5: BANQUETS & EVENTS */}
-              {activeTab === 'BANQUETS' && (
-                <div className="space-y-6">
-                  <div className="bg-white rounded-xl border border-[#e7e5e4] p-6 shadow-sm">
-                    <h3 className="text-base font-serif font-bold text-[#1c1917] mb-4">
-                      Wedding & Banquet Enquiries Received
-                    </h3>
-
-                    {hotelData.eventEnquiries.length === 0 ? (
-                      <p className="text-xs text-[#78716c]">No event enquiries logged yet.</p>
-                    ) : (
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs">
-                          <thead className="bg-[#f5f0eb] text-[#78716c] uppercase tracking-wider">
-                            <tr>
-                              <th className="p-3">Ref Code</th>
-                              <th className="p-3">Contact</th>
-                              <th className="p-3">Event Type</th>
-                              <th className="p-3">Target Date</th>
-                              <th className="p-3">Guests</th>
-                              <th className="p-3">Notes</th>
-                              <th className="p-3">Action</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-[#e7e5e4]">
-                            {hotelData.eventEnquiries.map((ev) => (
-                              <tr key={ev.id}>
-                                <td className="p-3 font-mono font-bold text-[#1c1917]">{ev.referenceId}</td>
-                                <td className="p-3">
-                                  <strong>{ev.name}</strong><br/>
-                                  <span className="text-[#57534e]">{ev.phone}</span>
-                                </td>
-                                <td className="p-3 font-medium text-[#c49b29]">{ev.eventType}</td>
-                                <td className="p-3">{ev.eventDate}</td>
-                                <td className="p-3">{ev.guestCount}</td>
-                                <td className="p-3 max-w-xs truncate text-[#78716c]">{ev.message || '—'}</td>
-                                <td className="p-3">
-                                  <button
-                                    onClick={() => {
-                                      const text = encodeURIComponent(`Hello ${ev.name}, regarding your event enquiry ${ev.referenceId} for ${ev.eventType} at Hotel Udika Palace...`);
-                                      window.open(`https://wa.me/${ev.phone.replace(/[^0-9]/g, '')}?text=${text}`, '_blank');
-                                    }}
-                                    className="p-1.5 bg-[#15803d] text-white rounded"
-                                    title="Connect on WhatsApp"
-                                  >
-                                    <MessageSquare className="w-3.5 h-3.5" />
-                                  </button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 6: SETTINGS & WEBSITE CMS */}
-              {activeTab === 'SETTINGS' && (
-                <div className="bg-white rounded-xl border border-[#e7e5e4] p-6 shadow-sm">
-                  <div className="mb-6 pb-4 border-b border-[#e7e5e4]">
-                    <h3 className="text-base font-serif font-bold text-[#1c1917]">
-                      Master Hotel & CMS Configuration
-                    </h3>
-                    <p className="text-xs text-[#78716c]">
-                      Update core contact details, restaurant branding, WhatsApp numbers, and homepage copy.
-                    </p>
-                  </div>
-
-                  {saveSuccessMsg && (
-                    <div className="p-3 mb-4 bg-emerald-50 text-emerald-800 rounded-lg border border-emerald-200 text-xs font-semibold">
-                      {saveSuccessMsg}
+                  {hotelData.messages.length === 0 ? (
+                    <div className="text-center py-12 text-[#78716c]">
+                      <Mail className="w-8 h-8 mx-auto mb-2 text-[#a8a29e]" />
+                      <p className="text-sm">No guest inquiries received yet.</p>
+                      <p className="text-xs text-[#a8a29e] mt-1">New contact form submissions will appear here instantly.</p>
                     </div>
-                  )}
-
-                  <form onSubmit={handleSaveSettings} className="space-y-4 text-xs">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-[#78716c] uppercase tracking-wider mb-1 font-semibold">Hotel Official Name</label>
-                        <input
-                          type="text"
-                          value={editingSettings.name}
-                          onChange={(e) => setEditingSettings({ ...editingSettings, name: e.target.value })}
-                          className="w-full border border-[#d6d3d1] rounded-lg px-3 py-2 text-sm text-[#1c1917]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[#78716c] uppercase tracking-wider mb-1 font-semibold">Restaurant Branding (e.g. Zayka / Jaika)</label>
-                        <input
-                          type="text"
-                          value={editingSettings.restaurantName}
-                          onChange={(e) => setEditingSettings({ ...editingSettings, restaurantName: e.target.value })}
-                          className="w-full border border-[#d6d3d1] rounded-lg px-3 py-2 text-sm text-[#1c1917]"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-[#78716c] uppercase tracking-wider mb-1 font-semibold">Public Phone Display</label>
-                        <input
-                          type="text"
-                          value={editingSettings.phoneDisplay}
-                          onChange={(e) => setEditingSettings({ ...editingSettings, phoneDisplay: e.target.value, phone: e.target.value.replace(/[^0-9+]/g, '') })}
-                          className="w-full border border-[#d6d3d1] rounded-lg px-3 py-2 text-sm text-[#1c1917]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[#78716c] uppercase tracking-wider mb-1 font-semibold">WhatsApp Number (with Country Code)</label>
-                        <input
-                          type="text"
-                          value={editingSettings.whatsappNumber}
-                          onChange={(e) => setEditingSettings({ ...editingSettings, whatsappNumber: e.target.value, whatsappDisplay: e.target.value })}
-                          className="w-full border border-[#d6d3d1] rounded-lg px-3 py-2 text-sm text-[#1c1917]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[#78716c] uppercase tracking-wider mb-1 font-semibold">Booking Desk Email</label>
-                        <input
-                          type="email"
-                          value={editingSettings.bookingEmail}
-                          onChange={(e) => setEditingSettings({ ...editingSettings, bookingEmail: e.target.value })}
-                          className="w-full border border-[#d6d3d1] rounded-lg px-3 py-2 text-sm text-[#1c1917]"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-[#78716c] uppercase tracking-wider mb-1 font-semibold">Hero Tagline</label>
-                      <input
-                        type="text"
-                        value={editingSettings.tagline}
-                        onChange={(e) => setEditingSettings({ ...editingSettings, tagline: e.target.value })}
-                        className="w-full border border-[#d6d3d1] rounded-lg px-3 py-2 text-sm text-[#1c1917]"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[#78716c] uppercase tracking-wider mb-1 font-semibold">Supporting Intro Copy</label>
-                      <textarea
-                        rows={3}
-                        value={editingSettings.supportingText}
-                        onChange={(e) => setEditingSettings({ ...editingSettings, supportingText: e.target.value })}
-                        className="w-full border border-[#d6d3d1] rounded-lg px-3 py-2 text-sm text-[#1c1917]"
-                      />
-                    </div>
-
-                    <div className="pt-3">
-                      <button
-                        type="submit"
-                        disabled={isSavingSettings}
-                        className="bg-[#1c1917] hover:bg-[#292524] text-[#faf8f5] py-3 px-6 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors shadow-md"
-                      >
-                        {isSavingSettings ? 'Synchronizing with Live Database...' : 'Save & Publish Changes'}
-                      </button>
-                    </div>
-                  </form>
-
-                  {/* SEO & Sitemap Engine Management */}
-                  <div className="mt-8 pt-6 border-t border-[#e7e5e4]">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Globe className="w-4 h-4 text-[#c49b29]" />
-                      <h4 className="text-sm font-serif font-bold text-[#1c1917]">
-                        Search Engine Optimization & Sitemap XML
-                      </h4>
-                    </div>
-                    <p className="text-xs text-[#78716c] mb-4">
-                      A dynamic XML sitemap is generated and indexed for Hotel Udika Palace, encompassing all rooms, culinary menu divisions, and banquet halls.
-                    </p>
-
-                    <div className="bg-[#faf8f5] p-4 rounded-xl border border-[#e7e5e4] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="space-y-1">
-                        <span className="text-xs font-semibold text-[#1c1917] block">
-                          Public XML Sitemap Index
-                        </span>
-                        <span className="text-[11px] text-[#78716c] font-mono">
-                          /sitemap.xml · Conformant to Sitemaps.org Protocol
-                        </span>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        <a
-                          href="/sitemap.xml"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-white hover:bg-[#f5f0eb] border border-[#d6d3d1] rounded-lg text-xs font-semibold text-[#1c1917] transition-colors"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5 text-[#c49b29]" />
-                          <span>Inspect Live Sitemap</span>
-                        </a>
-
-                        <a
-                          href="/robots.txt"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-white hover:bg-[#f5f0eb] border border-[#d6d3d1] rounded-lg text-xs font-semibold text-[#1c1917] transition-colors"
-                        >
-                          <span>robots.txt</span>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 7 & 8: Fallback for Gallery, Places, Messages */}
-              {(activeTab === 'GALLERY' || activeTab === 'PLACES' || activeTab === 'MESSAGES') && (
-                <div className="bg-white rounded-xl border border-[#e7e5e4] p-6 shadow-sm">
-                  <h3 className="text-base font-serif font-bold text-[#1c1917] mb-2">
-                    {activeTab === 'GALLERY' && 'Gallery Photos Management'}
-                    {activeTab === 'PLACES' && 'Nearby Places & Attractions Management'}
-                    {activeTab === 'MESSAGES' && 'Guest Messages & Contacts'}
-                  </h3>
-                  <p className="text-xs text-[#78716c] mb-4">
-                    Direct live synchronization active with Firestore database.
-                  </p>
-                  
-                  {activeTab === 'MESSAGES' && (
-                    <div className="space-y-3">
-                      {hotelData.messages.length === 0 ? (
-                        <p className="text-xs text-[#78716c]">No guest inquiries logged yet.</p>
-                      ) : (
-                        hotelData.messages.map((m) => (
-                          <div key={m.id} className="p-3 bg-[#faf8f5] rounded-lg border border-[#e7e5e4]">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h5 className="font-bold text-xs text-[#1c1917]">{m.name} ({m.phone})</h5>
-                                <p className="text-[11px] text-[#78716c]">{m.subject}</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {hotelData.messages.map((m) => (
+                        <div key={m.id} className="p-4 bg-[#faf8f5] rounded-xl border border-[#e7e5e4] space-y-3">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                              <h5 className="font-serif font-bold text-sm text-[#1c1917]">{m.name}</h5>
+                              <div className="flex items-center space-x-3 text-xs text-[#78716c] mt-0.5">
+                                <span>{m.phone}</span>
+                                {m.email && <span>· {m.email}</span>}
                               </div>
-                              <span className="text-[10px] text-[#a8a29e]">{new Date(m.createdAt).toLocaleDateString()}</span>
                             </div>
-                            <p className="text-xs text-[#57534e] mt-2 bg-white p-2.5 rounded border border-[#e7e5e4]">{m.message}</p>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-[10px] text-[#a8a29e] mr-2">
+                                {new Date(m.createdAt).toLocaleDateString('en-IN', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </span>
+                              <a
+                                href={`https://wa.me/${m.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${m.name}, thank you for contacting Hotel Udika Palace regarding: "${m.subject}".`)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-1.5 bg-[#15803d] hover:bg-[#166534] text-white rounded-lg inline-flex items-center justify-center transition-colors"
+                                title="Reply on WhatsApp"
+                              >
+                                <MessageSquare className="w-4 h-4" />
+                              </a>
+                              <a
+                                href={`tel:${m.phone}`}
+                                className="p-1.5 bg-[#1c1917] hover:bg-[#292524] text-white rounded-lg inline-flex items-center justify-center transition-colors"
+                                title="Call Guest"
+                              >
+                                <Phone className="w-4 h-4 text-[#d4af37]" />
+                              </a>
+                            </div>
                           </div>
-                        ))
-                      )}
-                    </div>
-                  )}
 
-                  {activeTab === 'PLACES' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {hotelData.nearbyPlaces.map((p) => (
-                        <div key={p.id} className="p-3 rounded-lg border border-[#e7e5e4] flex space-x-3 items-center">
-                          <img src={p.heroImage} alt="thumb" className="w-12 h-12 rounded object-cover" />
-                          <div>
-                            <h5 className="text-xs font-bold text-[#1c1917]">{p.name}</h5>
-                            <span className="text-[11px] text-[#c49b29]">Approx. {p.approxDistanceKm} km · {p.category}</span>
+                          <div className="bg-white p-3 rounded-lg border border-[#e7e5e4]">
+                            <span className="text-[10px] uppercase font-bold text-[#c49b29] block mb-1">
+                              Subject: {m.subject}
+                            </span>
+                            <p className="text-xs text-[#44403c] leading-relaxed whitespace-pre-line">{m.message}</p>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {activeTab === 'GALLERY' && (
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {hotelData.gallery.map((g) => (
-                        <div key={g.id} className="rounded-lg overflow-hidden border border-[#e7e5e4]">
-                          <img src={g.imageUrl} alt={g.title} className="h-28 w-full object-cover" />
-                          <div className="p-2 bg-white text-[11px] truncate font-medium">{g.title}</div>
                         </div>
                       ))}
                     </div>

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { GalleryItem } from '../types';
+import { GalleryItem, HotelSettings } from '../types';
 import { X, ChevronLeft, ChevronRight, Eye, Sparkles, Filter } from 'lucide-react';
 
 interface GallerySectionProps {
   gallery: GalleryItem[];
+  settings?: HotelSettings;
 }
 
-export const GallerySection: React.FC<GallerySectionProps> = ({ gallery }) => {
+export const GallerySection: React.FC<GallerySectionProps> = ({ gallery, settings }) => {
   const [activeCategory, setActiveCategory] = useState<string>('ALL');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -43,15 +44,15 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ gallery }) => {
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center space-x-2 text-xs font-semibold tracking-widest uppercase text-[#c49b29] mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Visual Glimpse</span>
+            <span>{settings?.galleryEyebrow || 'Visual Glimpse'}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-[#1c1917] tracking-tight mb-4">
-            The Udika Gallery
+            {settings?.galleryHeading || 'The Udika Gallery'}
           </h2>
 
           <p className="text-sm sm:text-base text-[#78716c] font-light leading-relaxed">
-            Experience our refined architectural appointments, tastefully furnished suites, banqueting halls, and aromatic dining scenes.
+            {settings?.galleryDescription || 'Experience our refined architectural appointments, tastefully furnished suites, banqueting halls, and aromatic dining scenes.'}
           </p>
 
           {/* Category Filter Pills */}
