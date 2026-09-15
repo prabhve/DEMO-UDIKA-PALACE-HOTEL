@@ -1,0 +1,6 @@
+{
+  "name": "Hotel Udika Palace",
+  "description": "Stay, dine and celebrate at Hotel Udika Palace in Waidhan, Singrauli. Explore comfortable rooms, dining, events, nearby attractions and direct booking enquiries.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
